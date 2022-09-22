@@ -13,7 +13,7 @@ import java.util.Collection;
 public class PostRestController {
 
     @Autowired
-    private PostService postService;
+    PostService postService;
 
     @GetMapping("/posts")
     public ResponseEntity<Collection<PostDto>> readPostAll() {
@@ -28,5 +28,17 @@ public class PostRestController {
     @PostMapping("/post")
     public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
         return ResponseEntity.ok(this.postService.createPost(postDto));
+    }
+
+
+    @PutMapping("/post/{postNo}")
+    public ResponseEntity<PostDto> updatePost(@PathVariable("postNo") Long postNo, @RequestBody PostDto postDto) {
+        return ResponseEntity.ok(this.postService.updatePost(postNo, postDto));
+    }
+
+    // DELETE
+    @PutMapping("/post/delete/{postNo}")
+    public void deletePost(@PathVariable("postNo") Long postNo) {
+        this.postService.deletePost(postNo);
     }
 }

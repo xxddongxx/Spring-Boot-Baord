@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http//www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/defaultlayout}">
+
+
+<script layout:fragment="script" th:src="@{/js/board.js}"></script>
+
+<title layout:fragment="title">Home</title>
+
+
+<div layout:fragment="content">
+	
+	<table class="table table-hover my-3" style="table-layout: fixed;">
+		<thead class="thead-dark text-center">
+			<tr>
+				<th width="60%">제목</th>
+				<th width="25%">등록일</th>
+				<th width="15%">조회수</th>
+			</tr>
+		</thead>
+		<tbody id="postTable" name="postTable">
+			<tr>
+				<td>Mark</td>
+				<td>Otto</td>
+				<td>@mdo</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+
+</html>

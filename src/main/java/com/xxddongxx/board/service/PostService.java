@@ -17,7 +17,7 @@ import java.util.Optional;
 public class PostService {
 
     @Autowired
-    private PostRepository postRepository;
+    PostRepository postRepository;
 
     public PostDto createPost(PostDto postDto) {
         String newTitle = postDto.getTitle();
@@ -34,15 +34,46 @@ public class PostService {
 
     public List<PostDto> readPostAll() {
         List<PostDto> postDtoList = new ArrayList<>();
-        postRepository.findAll().stream().filter(post -> !post.isDelete()).forEach(post -> postDtoList.add(new PostDto(post)));
+        this.postRepository.findAll().stream().filter(post -> !post.isDelete()).forEach(post -> postDtoList.add(new PostDto(post)));
         return postDtoList;
     }
 
+    public Post selectPost(Long postNo) {
+        Optional<Post> selectPost = this.postRepository.findById(postNo).filter(post -> !post.isDelete());
+        Post post = selectPost.get();
+        post.updateViewCount(post.getViewCount());
+        return post;
+    }
+
     public PostDto readPost(Long postNo) {
-        Optional<Post> targetPost = postRepository.findById(postNo).filter(post -> !post.isDelete());
+        Optional<Post> targetPost = this.postRepository.findById(postNo).filter(post -> !post.isDelete());
 
         if (targetPost.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         return new PostDto(targetPost.get());
+    }
+
+    public PostDto updatePost(Long postNo, PostDto postDto) {
+        Optional<Post> targetPost = this.postRepository.findById(postNo).filter(post -> !post.isDelete());
+
+        if (targetPost.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        Post post = targetPost.get();
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+
+        this.postRepository.save(post);
+
+        return new PostDto(post);
+    }
+
+    public void deletePost(Long postNo) {
+        Optional<Post> targetPost = this.postRepository.findById(postNo).filter(post -> !post.isDelete());
+
+        if (targetPost.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        Post post = targetPost.get();
+        post.setDelete(true);
+        this.postRepository.save(post);
     }
 }

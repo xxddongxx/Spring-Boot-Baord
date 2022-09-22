@@ -21,4 +21,10 @@ public class Post extends BaseTime {
     private String content;
 
     private boolean isDelete = false;
+    private Long viewCount = 0L;
+
+    public Post updateViewCount(Long viewCount) {
+        this.viewCount += viewCount;
+        return this;
+    }
 }
