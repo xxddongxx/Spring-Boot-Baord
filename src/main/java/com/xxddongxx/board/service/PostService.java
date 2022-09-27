@@ -41,7 +41,8 @@ public class PostService {
     public Post selectPost(Long postNo) {
         Optional<Post> selectPost = this.postRepository.findById(postNo).filter(post -> !post.isDelete());
         Post post = selectPost.get();
-        post.updateViewCount(post.getViewCount());
+        post.updateViewCount();
+        this.postRepository.save(post);
         return post;
     }
 

@@ -19,7 +19,13 @@
 				<textarea class="form-control" id="summernote" name="content" placeholder="content" maxlength="140"
 					rows="7"></textarea>
 			</div>
-			<input class="btn btn-primary" type="button" onClick="savePost();" value="저장">
+			<div class="text-right">
+				<button type="button" class="btn btn-outline-danger" onClick="history.back();">취소</button>
+				<button type="button" class="btn btn-outline-secondary" onClick="location.href='/';">목록</button>
+				<button type="button" class="btn btn-outline-primary" onClick="savePost();">저장</button>
+			</div>
+			
+			<!-- <input class="btn btn-primary" type="button" onClick="savePost();" value="저장"> -->
 		</form>
 </div>
 

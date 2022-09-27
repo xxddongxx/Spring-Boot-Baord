@@ -2,13 +2,14 @@ $(document).ready(function ($) {
     console.log("test1");
     let pathHost = location.hostname;
     let path = location.pathname;
+    let postNo = path.split('/').slice(-1)[0];
 
     if (path == "/") {
         console.log("index");
         readBoards();
     } else if(path.includes("/view/post")) {
         console.log("detail");
-        detailPost();
+        detailPost(postNo);
 
     } else if (path.includes("/create")) {
         console.log("create");
@@ -22,8 +23,6 @@ $(document).ready(function ($) {
             console.log("click3");
         });
     })
-
-    
 
 })
 
@@ -76,10 +75,7 @@ function splitTime(dateTime) {
     return createDate + ' ' + createTime;
 }
 
-detailPost = function() {
-    let path = location.pathname;
-    let postNo = path.split('/').slice(-1)[0];
-    console.log(`/api/post/${postNo}`);
+detailPost = function(postNo) {
 
     $.ajax({
         type: `GET`,
@@ -89,6 +85,8 @@ detailPost = function() {
             console.log(response);
             let tempHtml = addPost(response);
             $("#detailPost").append(tempHtml);
+            let tempBtn = addBtn(postNo);
+            $("#updateBtn").append(tempBtn);
         },
         error: function(response) {
             if (response.responseJSON && response.responseJSON.message) {
@@ -104,5 +102,30 @@ function addPost(itemDto) {
     return `<h1>${itemDto.title}</h1>
     <p>${splitTime(itemDto.createdAt)}</p>
     <hr>
-    <div>${itemDto.content}</div>`
+    <div>${itemDto.content}</div>
+    `
+}
+
+function deletePost(postNo) {
+    $.ajax({
+        type: `PUT`,
+        url: `/api/post/delete/${postNo}`,
+        success: function(response) {
+            window.location.href='/';
+        },
+        error: function(response) {
+            if (response.responseJSON && response.responseJSON.message) {
+                alert(response.responseJSON.message);
+            } else {
+                alert("알 수 없는 에러가 발생하였습니다.");
+            }
+        }
+    })
+}
+
+function addBtn(postNo) {
+    return `
+    <button type="button" class="btn btn-outline-danger" onClick="deletePost(${postNo});">삭제</button>
+    <button type="button" class="btn btn-outline-secondary" onClick="location.href='/';">목록</button>
+    <button type="button" class="btn btn-outline-primary" onClick="window.location.replace('/view/update/post/${postNo}');">수정</button>`
 }

@@ -28,4 +28,9 @@ public class HomeController {
         return "detail";
     }
 
+    @GetMapping("/view/update/post/{postNo}")
+    public String updatePost(@PathVariable("postNo") Long postNo) {
+        return "create";
+    }
+
 }

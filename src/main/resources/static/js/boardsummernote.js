@@ -1,11 +1,33 @@
 $(document).ready(function () {
     console.log("summernote");
+    let path = location.pathname;
+    let targetNo;
+    let postNo = path.split('/').slice(-1)[0];
+    
+    if (path.includes("/update")){
+        
+        updatePost(postNo);
+    }
 
     $('#summernote').summernote({
         height: 300,
         minHeight: null,
         maxHeight: null,
         focus: true,
+        toolbar: [
+            // [groupName, [list of button]]
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
+            ['color', ['forecolor','color']],
+            ['table', ['table']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['insert',['picture','link','video']],
+            ['view', ['fullscreen', 'help']]
+          ],
+        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+        fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
         callbacks: {
             onImageUpload: function (files, editor, welEditable) {
                 for (var i = 0; i < files.length; i++) {
@@ -14,6 +36,8 @@ $(document).ready(function () {
             }
         }
     });
+
+
 });
 
 function sendFile(file, el) {
@@ -36,10 +60,9 @@ function sendFile(file, el) {
 }
 
 savePost = function () {
-    let title = $("#title").val();
-    let content = $("#summernote").val();
-
-    let data = JSON.stringify({ "title": title, "content": content });
+    let title = $("#title");
+    let content = $("#summernote");
+    let data = JSON.stringify({ "title": title.val(), "content": content.val() });
     console.log(data);
 
     $.ajax({
@@ -53,6 +76,31 @@ savePost = function () {
             let targetNo = response['postNo'];
             console.log(targetNo);
             window.location.replace(`/view/post/${targetNo}`);
+        },
+        error: function (response) {
+            if (response.responseJSON && response.responseJSON.message) {
+                alert(response.responseJSON.message);
+            } else {
+                alert("알 수 없는 에러가 발생하였습니다.");
+            }
+        }
+    })
+}
+
+updatePost = function(postNo) {
+    let title = $("#title");
+    let content = $("#summernote");
+
+    $.ajax({
+        type: "GET",
+        url: `/api/post/${postNo}`,
+        // contentType: "application/json",
+        // data: data,
+        success: function (response) {
+            console.log(response);
+            title.val(response.title);
+            content.summernote('code', response.content);
+            // content.summernote('insertText', response.content);
         },
         error: function (response) {
             if (response.responseJSON && response.responseJSON.message) {
