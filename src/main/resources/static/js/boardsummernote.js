@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    console.log("create");
+    console.log("summernote");
 
     $('#summernote').summernote({
         height: 300,
@@ -48,8 +48,11 @@ savePost = function () {
         contentType: "application/json",
         data: data,
         success: function (response) {
-            alert("저장에 성공");
-            window.location.replace("http://localhost:8080");
+            console.log(response);
+
+            let targetNo = response['postNo'];
+            console.log(targetNo);
+            window.location.replace(`/view/post/${targetNo}`);
         },
         error: function (response) {
             if (response.responseJSON && response.responseJSON.message) {

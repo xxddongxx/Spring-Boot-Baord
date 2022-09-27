@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 public class PostDto {
 
+    private Long postNo;
     private String title;
     private String content;
     private Long viewCount;
@@ -25,6 +26,7 @@ public class PostDto {
     }
 
     public PostDto(Post post) {
+        this.postNo = post.getPostNo();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.viewCount = post.getViewCount();
