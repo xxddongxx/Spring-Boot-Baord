@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class HomeController {
@@ -31,6 +32,11 @@ public class HomeController {
     @GetMapping("/view/update/post/{postNo}")
     public String updatePost(@PathVariable("postNo") Long postNo) {
         return "create";
+    }
+
+    @GetMapping("view/search")
+    public String searchPost(@RequestParam(value = "keyword") String keyword) {
+        return "index";
     }
 
 }

@@ -7,14 +7,19 @@ $(document).ready(function ($) {
     if (path == "/") {
         console.log("index");
         readBoards();
+    } else if (path.includes("/create")) {
+        console.log("create");
+    } else if (path.includes("/search")) {
+        console.log("search");
+        let url_href = window.location.href;
+        var url = new URL(url_href);
+        var keyword = url.searchParams.get("keyword");
+        searchPost(keyword);
+
     } else if(path.includes("/view/post")) {
         console.log("detail");
         detailPost(postNo);
-
-    } else if (path.includes("/create")) {
-        console.log("create");
-    }
-     else {
+    } else {
         console.log("else");
     }
 
@@ -63,16 +68,13 @@ function addHTMLTable(itemDto) {
 }
 
 function splitDate(dateTime){
-    let createDate = dateTime.toString().split('T');
-    return createDate[0];
+    const d = new Date(dateTime);
+    return d.toLocaleDateString();
 }
 
 function splitTime(dateTime) {
-    let createDate = splitDate(dateTime);
-    let allTime = dateTime.toString().split('T')[1].split(':');
-    let createTime = allTime[0] + ':' + allTime[1];
-
-    return createDate + ' ' + createTime;
+    const d = new Date(dateTime);
+    return d.toLocaleTimeString();
 }
 
 detailPost = function(postNo) {
@@ -100,7 +102,7 @@ detailPost = function(postNo) {
 
 function addPost(itemDto) {
     return `<h1>${itemDto.title}</h1>
-    <p>${splitTime(itemDto.createdAt)}</p>
+    <p>${splitDate(itemDto.createdAt)}   ${splitTime(itemDto.createdAt)}</p>
     <hr>
     <div>${itemDto.content}</div>
     `
@@ -128,4 +130,32 @@ function addBtn(postNo) {
     <button type="button" class="btn btn-outline-danger" onClick="deletePost(${postNo});">삭제</button>
     <button type="button" class="btn btn-outline-secondary" onClick="location.href='/';">목록</button>
     <button type="button" class="btn btn-outline-primary" onClick="window.location.replace('/view/update/post/${postNo}');">수정</button>`
+}
+
+searchPost = function(keyword) {
+    
+    $.ajax({
+        type: `GET`,
+        url: `/api/post/search/${keyword}`,
+        success: function(response) {
+            $("#postTable").empty();
+            let searchKeyword = "# " + keyword;
+
+            $("#keyword").append(searchKeyword);
+
+            for (let i=0; i < response.length; i++) {
+                let itemDto = response[i];
+                let tempHtml = addHTMLTable(itemDto);
+                $("#postTable").append(tempHtml);
+            }
+            
+        },
+        error: function(response) {
+            if (response.responseJSON && response.responseJSON.message) {
+                alert(response.responseJSON.message);
+            } else {
+                alert("알 수 없는 에러가 발생하였습니다.");
+            }
+        }
+    })
 }

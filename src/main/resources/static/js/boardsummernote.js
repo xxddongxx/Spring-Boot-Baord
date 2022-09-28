@@ -5,7 +5,6 @@ $(document).ready(function () {
     let postNo = path.split('/').slice(-1)[0];
     
     if (path.includes("/update")){
-        
         updatePost(postNo);
     }
 
@@ -65,26 +64,55 @@ savePost = function () {
     let data = JSON.stringify({ "title": title.val(), "content": content.val() });
     console.log(data);
 
-    $.ajax({
-        type: "POST",
-        url: `/api/post`,
-        contentType: "application/json",
-        data: data,
-        success: function (response) {
-            console.log(response);
+    let path = location.pathname;
+    
+    if (path.includes("/update")) {
+        let postNo = path.split('/').slice(-1)[0];
 
-            let targetNo = response['postNo'];
-            console.log(targetNo);
-            window.location.replace(`/view/post/${targetNo}`);
-        },
-        error: function (response) {
-            if (response.responseJSON && response.responseJSON.message) {
-                alert(response.responseJSON.message);
-            } else {
-                alert("알 수 없는 에러가 발생하였습니다.");
+        $.ajax({
+            type: "PUT",
+            url: `/api/post/${postNo}`,
+            contentType: "application/json",
+            data: data,
+            success: function (response) {
+                console.log(response);
+    
+                let targetNo = response['postNo'];
+                console.log(targetNo);
+                window.location.replace(`/view/post/${targetNo}`);
+            },
+            error: function (response) {
+                if (response.responseJSON && response.responseJSON.message) {
+                    alert(response.responseJSON.message);
+                } else {
+                    alert("알 수 없는 에러가 발생하였습니다.");
+                }
             }
-        }
-    })
+        })
+    } else {
+        $.ajax({
+            type: "POST",
+            url: `/api/post`,
+            contentType: "application/json",
+            data: data,
+            success: function (response) {
+                console.log(response);
+    
+                let targetNo = response['postNo'];
+                console.log(targetNo);
+                window.location.replace(`/view/post/${targetNo}`);
+            },
+            error: function (response) {
+                if (response.responseJSON && response.responseJSON.message) {
+                    alert(response.responseJSON.message);
+                } else {
+                    alert("알 수 없는 에러가 발생하였습니다.");
+                }
+            }
+        })
+    }
+
+    
 }
 
 updatePost = function(postNo) {
