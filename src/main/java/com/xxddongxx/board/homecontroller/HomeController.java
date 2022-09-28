@@ -1,4 +1,4 @@
-package com.xxddongxx.board.controller;
+package com.xxddongxx.board.homecontroller;
 
 import com.xxddongxx.board.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
