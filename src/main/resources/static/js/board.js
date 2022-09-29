@@ -48,8 +48,6 @@ readBoards = function(){
         error: function(response) {
             if (response.responseJSON && response.responseJSON.message) {
                 alert(response.responseJSON.message);
-            } else {
-                alert("알 수 없는 에러가 발생하였습니다.");
             }
         }
     })
