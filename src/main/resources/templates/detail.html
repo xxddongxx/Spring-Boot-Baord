@@ -11,12 +11,15 @@
 
 <div layout:fragment="content">
     <div class="detailPost" id="detailPost" name="detailPost">
-		<!-- <p class="postTitle" name="postTitle">test title</p>
-        <p class="postCreatedAt" name="postCreatedAt">2022-09-27</p>
-        <div class="postContent" name="postContent">test content</div> -->
+		<h1 th:text="${post.title}"></h1>
+        <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd a HH:mm')}"></p>
+        <hr>
+        <div th:utext="${post.content}"></div>
     </div>
     <div class="text-right" id="updateBtn">
-        
+        <button type="button" class="btn btn-outline-danger" th:postNo="${post.postNo}" onclick="deletePost(this.getAttribute('postNo'))">삭제</button>
+        <button type="button" class="btn btn-outline-secondary" onclick="listPost();">목록</button>
+        <button type="button" class="btn btn-outline-primary" th:postNo="${post.postNo}" onclick="updatePost(this.getAttribute('postNo'))">수정</button>
     </div>
 </div>
 

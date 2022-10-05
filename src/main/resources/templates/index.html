@@ -8,7 +8,7 @@
 
 <div layout:fragment="content">
 	<h2 id="keyword"></h2>
-	
+
 	<table class="table table-hover my-3" style="table-layout: fixed;">
 		<thead class="thead-dark text-center">
 			<tr>
@@ -17,14 +17,47 @@
 				<th width="15%">조회수</th>
 			</tr>
 		</thead>
-		<tbody id="postTable" name="postTable">
-			<tr>
-				<td>Mark</td>
-				<td>Otto</td>
-				<td>@mdo</td>
+		<tbody id="postTable" name="postTable" >
+			<tr th:each="post : ${pagePosts.postResults}" th:postNo="${post.postNo}" th:onclick="detailPost(this.getAttribute('postNo'))">
+				<td class="px-4" th:text="${post.title}">Mark</td>
+				<td class="text-right px-4" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">Otto</td>
+				<td class="text-right px-4" th:text="${post.viewCount}">@mdo</td>
 			</tr>
 		</tbody>
 	</table>
+
+	<!-- 페이징처리 시작 -->
+	<div id="pagination">
+		<nav aria-label="Page navigation example">
+			<ul class="pagination justify-content-center">
+				<th:block th:if="${#httpServletRequest.requestURI == '/view/search'}">
+					<li class="page-item" th:classappend="${1 == pagePosts.postResults.pageable.pageNumber + 1} ? 'disabled'">
+						<a class="page-link" href="#" th:href="@{/view/search(keyword=${keyword}, page=${pagePosts.postResults.pageable.pageNumber - 1})}">Previous</a>
+					  </li>
+					  <li class="page-item" th:classappend="${i == pagePosts.postResults.pageable.pageNumber + 1} ? 'disabled'" th:each="i: ${#numbers.sequence(pagePosts.startPage, pagePosts.endPage)}">
+						  <a class="page-link" th:href="@{/view/search(keyword=${keyword}, page=${i - 1})}" th:text="${i}">1</a>
+					  </li>
+				
+					  <li class="page-item" th:classappend="${pagePosts.postResults.totalPages == pagePosts.postResults.pageable.pageNumber + 1} ? 'disabled'">
+						<a class="page-link" href="#" th:href="@{/view/search(keyword=${keyword}, page=${pagePosts.postResults.pageable.pageNumber + 1})}">Next</a>
+					  </li>
+				</th:block>
+				<th:block th:unless="${#httpServletRequest.requestURI == '/view/search'}">
+					<li class="page-item" th:classappend="${1 == pagePosts.postResults.pageable.pageNumber + 1} ? 'disabled'">
+						<a class="page-link" href="#" th:href="@{/(page=${pagePosts.postResults.pageable.pageNumber - 1})}">Previous</a>
+					  </li>
+					  <li class="page-item" th:classappend="${i == pagePosts.postResults.pageable.pageNumber + 1} ? 'disabled'" th:each="i: ${#numbers.sequence(pagePosts.startPage, pagePosts.endPage)}">
+						  <a class="page-link" th:href="@{/(page=${i - 1})}" th:text="${i}">1</a>
+					  </li>
+				
+					  <li class="page-item" th:classappend="${pagePosts.postResults.totalPages == pagePosts.postResults.pageable.pageNumber + 1} ? 'disabled'">
+						<a class="page-link" href="#" th:href="@{/(page=${pagePosts.postResults.pageable.pageNumber + 1})}">Next</a>
+					  </li>
+				</th:block>
+			</ul>
+		  </nav>
+	</div>
+	<!-- 페이징처리 끝 -->
 </div>
 
 </html>

@@ -1,11 +1,15 @@
 package com.xxddongxx.board.service;
 
+import com.xxddongxx.board.dto.PageDto;
 import com.xxddongxx.board.dto.PostDto;
 import com.xxddongxx.board.model.Post;
 import com.xxddongxx.board.repository.PostRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Streamable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -35,10 +39,17 @@ public class PostService {
         return new PostDto(newPost);
     }
 
-    public List<PostDto> readPostAll() {
-        List<PostDto> postDtoList = new ArrayList<>();
-        this.postRepository.findAll().stream().filter(post -> !post.isDelete()).forEach(post -> postDtoList.add(new PostDto(post)));
-        return postDtoList;
+    public PageDto readPostAll(Pageable pageable) {
+        Page<Post> pagePosts = this.postRepository.findAllByIsDelete(false, pageable);
+
+        long totalCount = pagePosts.getTotalElements();
+        int nowPage = pagePosts.getPageable().getPageNumber() + 1;
+        int startPage = Math.max(1, nowPage - 4);
+        int endPage = Math.min(pagePosts.getTotalPages(), nowPage + 4);
+
+        PageDto pageDto = new PageDto(nowPage, startPage, endPage, pagePosts);
+        logger.info(pageDto.toString());
+        return pageDto;
     }
 
     public Post selectPost(Long postNo) {
@@ -79,14 +90,19 @@ public class PostService {
         this.postRepository.save(post);
     }
 
-    public List<PostDto> searchPost(String keyword) {
-        List<PostDto> searchPostList = new ArrayList<>();
+    public PageDto searchPost(String keyword, Pageable pageable) {
+        Page<Post> pagePosts = this.postRepository.findAllByIsDeleteAndTitleContainingIgnoreCaseOrIsDeleteAndContentContainingIgnoreCase(false, keyword, false, keyword, pageable);
 
-        this.postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword).stream().filter(post -> !post.isDelete()).forEach(post -> searchPostList.add(new PostDto(post)));
-        if (searchPostList.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (pagePosts.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
-        logger.info("search Post List >>> " + searchPostList);
+        long totalCount = pagePosts.getTotalElements();
+        int nowPage = pagePosts.getPageable().getPageNumber() + 1;
+        int startPage = Math.max(1, nowPage - 4);
+        int endPage = Math.min(pagePosts.getTotalPages(), nowPage + 4);
 
-        return searchPostList;
+        PageDto pageDto = new PageDto(nowPage, startPage, endPage, pagePosts);
+        logger.info(pageDto.toString());
+
+        return pageDto;
     }
 }

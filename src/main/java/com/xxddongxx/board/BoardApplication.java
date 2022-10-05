@@ -6,11 +6,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import javax.swing.*;
+
 @EnableJpaAuditing
 @SpringBootApplication
 public class BoardApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(BoardApplication.class, args);
 	}
 

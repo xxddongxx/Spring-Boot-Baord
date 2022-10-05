@@ -15,7 +15,7 @@ public class PostDto {
     private String title;
     private String content;
     private Long viewCount;
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     public PostDto() {
     }
@@ -30,6 +30,6 @@ public class PostDto {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.viewCount = post.getViewCount();
-        this.createdAt = String.valueOf(post.getCreatedAt());
+        this.createdAt = post.getCreatedAt();
     }
 }
